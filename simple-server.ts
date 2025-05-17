@@ -1,36 +1,60 @@
 import { ApolloServer, gql } from "apollo-server";
+import { randomUUID } from 'node:crypto';
+
+/*
+*Under fetching
+- Rota HTTP que retorna dados de menos
+
+*Over fetching
+- Rota HTTP retorna mais dados que precisamos
+*/
 
 const typeDefs = gql`
-    type Query {
-        users: [String!]!
-    }
+  type User {
+    id: String!
+    name: String!
+  }
 
-    type Mutation {
-        createUser(name: String!): String!
-    }
+  type Query {
+    users: [User!]!
+  }
+
+  type Mutation {
+    createUser(name: String!): User!
+  }
 `;
 
-const users: string[] = [];
+interface User {
+  id: string;
+  name: string;
+}
+
+const users: User[] = [];
 
 const server = new ApolloServer({
-    typeDefs,
-    resolvers: {
-        Query: {
-            users: () => {
-                return users
-            }
-        },
-        Mutation: {
-            createUser: (parent, args, ctx) => {
-                console.log(args);
-                users.push(args.name);
+  typeDefs,
+  resolvers: {
+    Query: {
+      users: () => {
+        return users;
+      },
+    },
 
-                return args.name;
-            }
-        }
-    }
+    Mutation: {
+      createUser: (_, args) => {
+        const user = {
+            id: randomUUID(),
+            name: args.name
+        };
+
+        users.push(user);
+
+        return user;
+      },
+    },
+  },
 });
 
 server.listen().then(({ url }) => {
-    console.log(url);
+  console.log(url);
 });
