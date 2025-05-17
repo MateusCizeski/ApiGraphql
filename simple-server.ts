@@ -1,5 +1,5 @@
 import { ApolloServer, gql } from "apollo-server";
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
 /*
 *Under fetching
@@ -7,6 +7,12 @@ import { randomUUID } from 'node:crypto';
 
 *Over fetching
 - Rota HTTP retorna mais dados que precisamos
+*/
+
+
+/*
+* Schema first approach
+* Code first
 */
 
 const typeDefs = gql`
@@ -43,8 +49,8 @@ const server = new ApolloServer({
     Mutation: {
       createUser: (_, args) => {
         const user = {
-            id: randomUUID(),
-            name: args.name
+          id: randomUUID(),
+          name: args.name,
         };
 
         users.push(user);
